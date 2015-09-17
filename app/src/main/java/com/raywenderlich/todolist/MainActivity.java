@@ -150,19 +150,19 @@ public class MainActivity extends Activity {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
 
         // set title
-        alertDialogBuilder.setTitle("Task");
+        alertDialogBuilder.setTitle(R.string.alert_title);
 
         // set dialog message
         alertDialogBuilder
                 .setMessage(mList.get(position))
-                .setPositiveButton("Mark as done",new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.delete,new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,int id) {
                         // if this button is clicked, delete the task from the list
                         mList.remove(position);
                         mAdapter.notifyDataSetChanged();
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // if this button is clicked, just close
                         // the dialog box and do nothing

@@ -7,5 +7,8 @@
     <string name="title_activity_task_description">TaskDescriptionActivity</string>
     <string name="description">Enter task description:</string>
     <string name="done">Done</string>
+    <string name="alert_title">Task</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
 
 </resources>
