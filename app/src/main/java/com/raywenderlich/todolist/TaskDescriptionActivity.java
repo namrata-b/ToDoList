@@ -8,30 +8,29 @@ import android.widget.EditText;
 
 
 public class TaskDescriptionActivity extends Activity {
-    public static final String EXTRA_TASK_DESCRIPTION = "task";
+  public static final String EXTRA_TASK_DESCRIPTION = "task";
 
-    private EditText mDescriptionView;
+  private EditText mDescriptionView;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_task_description);
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_task_description);
 
-        mDescriptionView = (EditText) findViewById(R.id.descriptionText);
+    mDescriptionView = (EditText) findViewById(R.id.descriptionText);
+  }
 
+
+  public void doneClicked(View view) {
+    String taskDescription = mDescriptionView.getText().toString();
+    if (!taskDescription.isEmpty()) {
+      Intent result = new Intent();
+      result.putExtra(EXTRA_TASK_DESCRIPTION, taskDescription);
+      setResult(RESULT_OK, result);
+    } else {
+      setResult(RESULT_CANCELED);
     }
-
-
-    public void doneClicked(View view) {
-        String taskDescription = mDescriptionView.getText().toString();
-        if (!taskDescription.isEmpty()) {
-            Intent result = new Intent();
-            result.putExtra(EXTRA_TASK_DESCRIPTION, taskDescription);
-            setResult(RESULT_OK, result);
-        } else {
-            setResult(RESULT_CANCELED);
-        }
-        finish();
-    }
+    finish();
+  }
 
 }
