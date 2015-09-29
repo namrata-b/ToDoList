@@ -2,34 +2,34 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingBottom="@dimen/activity_vertical_margin"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
-                android:paddingBottom="@dimen/activity_vertical_margin"
                 tools:context="com.raywenderlich.todolist.TaskDescriptionActivity">
 
   <TextView
       android:id="@+id/descriptionLabel"
-      android:text="@string/description"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_alignParentTop="true"
-      android:padding="20dp"/>
+      android:padding="20dp"
+      android:text="@string/description"/>
 
   <EditText
       android:id="@+id/descriptionText"
       android:layout_width="match_parent"
       android:layout_height="100dp"
-      android:padding="20dp"
-      android:layout_below="@+id/descriptionLabel"/>
+      android:layout_below="@+id/descriptionLabel"
+      android:padding="20dp"/>
 
   <Button
       android:id="@+id/doneBtn"
-      android:text="@string/done"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_below="@+id/descriptionText"
+      android:onClick="doneClicked"
       android:padding="20dp"
-      android:onClick="doneClicked"/>
+      android:text="@string/done"/>
 
 </RelativeLayout>
