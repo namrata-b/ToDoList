@@ -50,7 +50,7 @@ import java.util.Date;
 
 public class MainActivity extends Activity {
   private static final String TAG = MainActivity.class.getName();
-  private final int ADD_TASK_REQUEST = 10;
+  private final int ADD_TASK_REQUEST = 1;
   private final String PREFS_TASKS = "prefs_tasks";
   private final String KEY_TASKS_LIST = "list";
 
@@ -82,21 +82,15 @@ public class MainActivity extends Activity {
       }
     };
 
+    mList = new ArrayList<String>();
     // load whatever was saved on disk. This also takes care of rotations and other config changes
     String savedList = getSharedPreferences(PREFS_TASKS, MODE_PRIVATE).getString(KEY_TASKS_LIST, null);
 
     if (savedList != null) {
       String[] items = savedList.split(",");
       mList = new ArrayList<String>(Arrays.asList(items));
-    } else {
-      String[] defaultValues = new String[]{"Sleep", "Code", "Play",
-          "Repeat", "Don't forget to eat!", "Dress up like mario and throw mushrooms at people"};
-
-      mList = new ArrayList<String>();
-      for (int i = 0; i < defaultValues.length; ++i) {
-        mList.add(defaultValues[i]);
-      }
     }
+
 
     mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mList);
     listview.setAdapter(mAdapter);
@@ -121,15 +115,6 @@ public class MainActivity extends Activity {
         Log.e(TAG, "Timetick Receiver not registered", e);
       }
     }
-
-    // Save all data which you want to persist.
-    StringBuilder savedList = new StringBuilder();
-    for (String s : mList) {
-      savedList.append(s);
-      savedList.append(",");
-    }
-
-    getSharedPreferences(PREFS_TASKS, MODE_PRIVATE).edit().putString(KEY_TASKS_LIST, savedList.toString()).commit();
   }
 
   @Override
@@ -142,8 +127,21 @@ public class MainActivity extends Activity {
   }
 
   @Override
+  protected void onStop() {
+    super.onStop();
+
+    // Save all data which you want to persist.
+    StringBuilder savedList = new StringBuilder();
+    for (String s : mList) {
+      savedList.append(s);
+      savedList.append(",");
+    }
+
+    getSharedPreferences(PREFS_TASKS, MODE_PRIVATE).edit().putString(KEY_TASKS_LIST, savedList.toString()).commit();
+  }
+
+  @Override
   public void onConfigurationChanged(Configuration newConfig) {
-    // prevents dialog from being dismissed if user has selected a task to modify.
     super.onConfigurationChanged(newConfig);
   }
 
@@ -165,16 +163,16 @@ public class MainActivity extends Activity {
         .setMessage(mList.get(position))
         .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int id) {
-            // if this button is clicked, delete the task from the list
-            mList.remove(position);
-            mAdapter.notifyDataSetChanged();
+          // if this button is clicked, delete the task from the list
+          mList.remove(position);
+          mAdapter.notifyDataSetChanged();
           }
         })
         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
           public void onClick(DialogInterface dialog, int id) {
-            // if this button is clicked, just close
-            // the dialog box and do nothing
-            dialog.cancel();
+          // if this button is clicked, just close
+          // the dialog box and do nothing
+          dialog.cancel();
           }
         });
 
@@ -194,13 +192,14 @@ public class MainActivity extends Activity {
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    // Check which request we're responding to
+    // 1 - Check which request we're responding to
     if (requestCode == ADD_TASK_REQUEST) {
-      // Make sure the request was successful
+      // 2 - Make sure the request was successful
       if (resultCode == RESULT_OK) {
-        // The user entered a task. Add task to the list.
+        // 3 - The user entered a task. Add task to the list.
         String task = data.getStringExtra(TaskDescriptionActivity.EXTRA_TASK_DESCRIPTION);
         mList.add(task);
+        // 4
         mAdapter.notifyDataSetChanged();
       }
     }

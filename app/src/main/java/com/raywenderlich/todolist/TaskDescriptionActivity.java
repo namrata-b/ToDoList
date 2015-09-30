@@ -44,15 +44,21 @@ public class TaskDescriptionActivity extends Activity {
 
 
   public void doneClicked(View view) {
+    // 1
     String taskDescription = mDescriptionView.getText().toString();
+
     if (!taskDescription.isEmpty()) {
+      // 2
       Intent result = new Intent();
       result.putExtra(EXTRA_TASK_DESCRIPTION, taskDescription);
       setResult(RESULT_OK, result);
     } else {
+      // 3
       setResult(RESULT_CANCELED);
     }
+    // 4
     finish();
   }
 
 }
+
