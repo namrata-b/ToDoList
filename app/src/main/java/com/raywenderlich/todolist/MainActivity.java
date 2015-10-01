@@ -61,17 +61,26 @@ public class MainActivity extends Activity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    // 1
     super.onCreate(savedInstanceState);
-    // Make the activity full screen
+
+    // 2
     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
     setContentView(R.layout.activity_main);
 
+    // 3
     mDateTimeTextView = (TextView) findViewById(R.id.dateTimeTextView);
     final Button addTaskBtn = (Button) findViewById(R.id.addTaskBtn);
     final ListView listview = (ListView) findViewById(R.id.taskListview);
-
-    //Create a broadcast receiver to handle change in time
+    mList = new ArrayList<String>();
+    // load whatever was saved on disk. This also takes care of rotations and other config changes
+    String savedList = getSharedPreferences(PREFS_TASKS, MODE_PRIVATE).getString(KEY_TASKS_LIST, null);
+    if (savedList != null) {
+      String[] items = savedList.split(",");
+      mList = new ArrayList<String>(Arrays.asList(items));
+    }
+    // Create a broadcast receiver to handle change in time
     mTickReceiver = new BroadcastReceiver() {
       @Override
       public void onReceive(Context context, Intent intent) {
@@ -82,19 +91,11 @@ public class MainActivity extends Activity {
       }
     };
 
-    mList = new ArrayList<String>();
-    // load whatever was saved on disk. This also takes care of rotations and other config changes
-    String savedList = getSharedPreferences(PREFS_TASKS, MODE_PRIVATE).getString(KEY_TASKS_LIST, null);
-
-    if (savedList != null) {
-      String[] items = savedList.split(",");
-      mList = new ArrayList<String>(Arrays.asList(items));
-    }
-
-
+    // 4
     mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mList);
     listview.setAdapter(mAdapter);
 
+    // 5
     listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -103,11 +104,48 @@ public class MainActivity extends Activity {
     });
   }
 
+  public void addTaskClicked(View view) {
+    // Launch another activity to enter Task
+
+    Intent intent = new Intent(MainActivity.this, TaskDescriptionActivity.class);
+    startActivityForResult(intent, ADD_TASK_REQUEST);
+  }
+
+  private static String getCurrentTimeStamp() {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");//dd/MM/yyyy
+    Date now = new Date();
+    String strDate = sdf.format(now);
+    return strDate;
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    // 1 - Check which request we're responding to
+    if (requestCode == ADD_TASK_REQUEST) {
+      // 2 - Make sure the request was successful
+      if (resultCode == RESULT_OK) {
+        // 3 - The user entered a task. Add task to the list.
+        String task = data.getStringExtra(TaskDescriptionActivity.EXTRA_TASK_DESCRIPTION);
+        mList.add(task);
+        // 4
+        mAdapter.notifyDataSetChanged();
+      }
+    }
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    // 1
+    mDateTimeTextView.setText(getCurrentTimeStamp());
+    // 2 - Register the broadcast receiver to receive TIME_TICK
+    registerReceiver(mTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+  }
+
   @Override
   protected void onPause() {
     super.onPause();
-
-    //unregister broadcast receiver.
+    // 3 - unregister broadcast receiver.
     if (mTickReceiver != null) {
       try {
         unregisterReceiver(mTickReceiver);
@@ -116,16 +154,6 @@ public class MainActivity extends Activity {
       }
     }
   }
-
-  @Override
-  protected void onResume() {
-    super.onResume();
-
-    mDateTimeTextView.setText(getCurrentTimeStamp());
-    //Register the broadcast receiver to receive TIME_TICK
-    registerReceiver(mTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
-  }
-
   @Override
   protected void onStop() {
     super.onStop();
@@ -136,20 +164,7 @@ public class MainActivity extends Activity {
       savedList.append(s);
       savedList.append(",");
     }
-
     getSharedPreferences(PREFS_TASKS, MODE_PRIVATE).edit().putString(KEY_TASKS_LIST, savedList.toString()).commit();
-  }
-
-  @Override
-  public void onConfigurationChanged(Configuration newConfig) {
-    super.onConfigurationChanged(newConfig);
-  }
-
-  private static String getCurrentTimeStamp() {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");//dd/MM/yyyy
-    Date now = new Date();
-    String strDate = sdf.format(now);
-    return strDate;
   }
 
   private void taskSelected(final int position) {
@@ -183,26 +198,9 @@ public class MainActivity extends Activity {
     alertDialog.show();
   }
 
-  public void addTaskClicked(View view) {
-    // Launch another activity to enter Task
-
-    Intent intent = new Intent(MainActivity.this, TaskDescriptionActivity.class);
-    startActivityForResult(intent, ADD_TASK_REQUEST);
-  }
-
   @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    // 1 - Check which request we're responding to
-    if (requestCode == ADD_TASK_REQUEST) {
-      // 2 - Make sure the request was successful
-      if (resultCode == RESULT_OK) {
-        // 3 - The user entered a task. Add task to the list.
-        String task = data.getStringExtra(TaskDescriptionActivity.EXTRA_TASK_DESCRIPTION);
-        mList.add(task);
-        // 4
-        mAdapter.notifyDataSetChanged();
-      }
-    }
+  public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
   }
 }
 
