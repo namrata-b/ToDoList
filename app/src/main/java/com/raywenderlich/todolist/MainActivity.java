@@ -135,17 +135,19 @@ public class MainActivity extends Activity {
 
   @Override
   protected void onResume() {
-    super.onResume();
     // 1
+    super.onResume();
+    // 2
     mDateTimeTextView.setText(getCurrentTimeStamp());
-    // 2 - Register the broadcast receiver to receive TIME_TICK
+    // 3 - Register the broadcast receiver to receive TIME_TICK
     registerReceiver(mTickReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
   }
 
   @Override
   protected void onPause() {
+    // 4
     super.onPause();
-    // 3 - unregister broadcast receiver.
+    // 5 - unregister broadcast receiver.
     if (mTickReceiver != null) {
       try {
         unregisterReceiver(mTickReceiver);
