@@ -170,12 +170,13 @@ public class MainActivity extends Activity {
   }
 
   private void taskSelected(final int position) {
+    // 1
     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
 
-    // set title
+    // 2-set title
     alertDialogBuilder.setTitle(R.string.alert_title);
 
-    // set dialog message
+    // 3-set dialog message
     alertDialogBuilder
         .setMessage(mList.get(position))
         .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
@@ -193,10 +194,10 @@ public class MainActivity extends Activity {
           }
         });
 
-    // create alert dialog
+    // 4-create alert dialog
     AlertDialog alertDialog = alertDialogBuilder.create();
 
-    // show the alert dialog
+    // 5-show the alert dialog
     alertDialog.show();
   }
 
